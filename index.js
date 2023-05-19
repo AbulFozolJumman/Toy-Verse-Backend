@@ -25,14 +25,19 @@ async function run() {
     try {
         const toysCollection = client.db('Toy-Verse').collection('toys');
 
-        app.get('/toys', async (req, res) => {
-            const result = await toysCollection.find().toArray();
+        // Get all Toys data and Get Toy by email
+         app.get('/toys', async (req, res) => {
+            let query = {};
+            if (req.query?.email) {
+                query = { email: req.query.email }
+            }
+            const result = await toysCollection.find(query).toArray();
             res.send(result);
         })
 
+        // Add toy 
         app.post('/toys', async (req, res) => {
             const addedToy = req.body;
-            console.log(addedToy);
             const result = await toysCollection.insertOne(addedToy);
             res.send(result);
         });
