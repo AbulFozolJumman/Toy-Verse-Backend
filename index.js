@@ -57,6 +57,33 @@ async function run() {
             res.send(result);
         });
 
+        // Delete Toy by Id
+        app.delete('/toys/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await toysCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        
+    // Update Toy by Id
+    app.put('/toys/:id', async (req, res) => {
+        const id = req.params.id;
+        const updatedToy = req.body;
+        const query = { _id: new ObjectId(id) };
+  
+        try {
+          const result = await toysCollection.updateOne(query, { $set: updatedToy });
+          if (result.matchedCount === 0) {
+            return res.status(404).json({ error: 'Toy not found' });
+          }
+          res.json(result);
+        } catch (error) {
+          console.error('Error updating toy:', error);
+          res.status(500).json({ error: 'Internal server error', message: error.message });
+        }
+      });
+
         // Connect the client to the server	(optional starting in v4.7)
         // await client.connect();
         // Send a ping to confirm a successful connection
